@@ -19,7 +19,9 @@ build:
     - cd source
     - cargo build --release --locked
     - mkdir -p $PREFIX/bin
-    - cp target/release/${{ repo_name }} $PREFIX/bin/${{ repo_name }}
+    - if: win
+      then: cp target/release/${{ repo_name }}.exe $PREFIX/bin/${{ repo_name }}.exe
+      else: cp target/release/${{ repo_name }} $PREFIX/bin/${{ repo_name }}
 
 requirements:
   build:
