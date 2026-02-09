@@ -28,9 +28,7 @@ build:
       then: export RUSTFLAGS="-C link-arg=-Wl,--dynamic-linker=/lib64/ld-linux-x86-64.so.2"
     - cargo build --release --locked
     - mkdir -p $PREFIX/bin
-    - if: win
-      then: cp target/release/${{ repo_name }}.exe $PREFIX/bin/${{ repo_name }}.exe
-      else: cp target/release/${{ repo_name }} $PREFIX/bin/${{ repo_name }}
+    - cp target/release/${{ repo_name }} $PREFIX/bin/${{ repo_name }}
 
 requirements:
   build:
