@@ -18,6 +18,10 @@ build:
   number: 0
   script:
     - cd source
+    - export CC=$CC
+    - export CXX=$CXX
+    - export LD=$LD
+    - export RUSTFLAGS="-C link-arg=-Wl,--dynamic-linker=/lib64/ld-linux-x86-64.so.2"
     - cargo build --release --locked
     - mkdir -p $PREFIX/bin
     - if: win
@@ -26,5 +30,9 @@ build:
 
 requirements:
   build:
-    - make
     - rust
+    - if: linux
+      then: ${{ compiler('c') }}
+      else: make
+    - if: linux
+      then: sysroot_linux-64 2.17
