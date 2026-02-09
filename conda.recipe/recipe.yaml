@@ -1,0 +1,26 @@
+context:
+  repo_owner: ${{ env.get("REPO_OWNER", default="devmatteini")}}
+  repo_name: ${{ env.get("REPO_NAME", default="dra")}}
+  pkg_version: ${{ env.get("PKG_VERSION", default="0.0.1") }}
+
+package:
+  name: ${{ repo_name|lower }}
+  version: ${{ pkg_version }}
+
+source:
+  url: https://github.com/${{ repo_owner }}/${{ repo_name }}/archive/refs/tags/${{ pkg_version }}.tar.gz
+  target_directory: source
+  # sha256: ${{ env.get("PKG_SHA256", default="") }}
+
+build:
+  number: 0
+  script:
+    - cd source
+    - cargo build --release --locked
+    - mkdir -p $PREFIX/bin
+    - cp target/release/${{ name }} $PREFIX/bin/${{ name }}
+
+requirements:
+  build:
+    - make
+    - rust
