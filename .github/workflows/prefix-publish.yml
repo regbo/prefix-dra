@@ -17,6 +17,7 @@ jobs:
   resolve-version:
     runs-on: ubuntu-latest
     outputs:
+      pkg_tag: ${{ steps.get_tag.outputs.pkg_tag }}
       pkg_version: ${{ steps.get_tag.outputs.pkg_version }}
       pkg_sha256: ${{ steps.get_tag.outputs.pkg_sha256 }}
       
@@ -59,7 +60,7 @@ jobs:
           SHA256=$(sha256sum source.tar.gz | awk '{print $1}')
 
           echo "Computed sha256: $SHA256"
-
+          echo "pkg_tag=$TAG" >> "$GITHUB_OUTPUT"
           echo "pkg_version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "pkg_sha256=$SHA256" >> "$GITHUB_OUTPUT"
           
@@ -89,6 +90,7 @@ jobs:
       contents: read
 
     env:
+      PKG_TAG: ${{ needs.resolve-version.outputs.pkg_tag }}
       PKG_VERSION: ${{ needs.resolve-version.outputs.pkg_version }}
       PKG_SHA256: ${{ needs.resolve-version.outputs.pkg_sha256 }}
 
@@ -104,6 +106,7 @@ jobs:
         env:
           REPO_OWNER: ${{ env.REPO_OWNER }}
           REPO_NAME: ${{ env.REPO_NAME }}
+          PKG_TAG: ${{ env.PKG_TAG }}
           PKG_VERSION: ${{ env.PKG_VERSION }}
           PKG_SHA256: ${{ env.PKG_SHA256 }}
         with:

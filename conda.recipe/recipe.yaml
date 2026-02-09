@@ -1,7 +1,8 @@
 context:
   repo_owner: ${{ env.get("REPO_OWNER", default="devmatteini")}}
   repo_name: ${{ env.get("REPO_NAME", default="dra")}}
-  pkg_version: ${{ env.get("PKG_VERSION", default="0.0.2") }}
+  pkg_tag: ${{ env.get("PKG_TAG", default="0.0.1") }}
+  pkg_version: ${{ env.get("PKG_VERSION", default="0.0.1") }}
   pkg_sha256: ${{ env.get("PKG_SHA256", default="") }}
 
 package:
@@ -9,7 +10,7 @@ package:
   version: ${{ pkg_version }}
 
 source:
-  url: https://github.com/${{ repo_owner }}/${{ repo_name }}/archive/refs/tags/${{ pkg_version }}.tar.gz
+  url: https://github.com/${{ repo_owner }}/${{ repo_name }}/archive/refs/tags/${{ pkg_tag }}.tar.gz
   target_directory: source
   sha256: ${{ pkg_sha256 }}
 
