@@ -19,7 +19,6 @@ build:
     - cd source
     - cargo build --release --locked
     - mkdir -p $PREFIX/bin
-    - echo "yo ${{ repo_name }}"
     - cp target/release/${{ repo_name }} $PREFIX/bin/${{ repo_name }}
 
 requirements:
