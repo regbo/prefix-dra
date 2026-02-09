@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       pkg_version: ${{ steps.get_tag.outputs.pkg_version }}
-      pkg_sha256: ${{ steps.get_tag.outputs.sha256 }}
+      pkg_sha256: ${{ steps.get_tag.outputs.pkg_sha256 }}
       
 
     steps:
