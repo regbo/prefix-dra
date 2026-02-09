@@ -20,13 +20,12 @@ jobs:
       pkg_version: ${{ steps.get_tag.outputs.pkg_version }}
 
     steps:
-      - name: Install jq
-        run: sudo apt-get update && sudo apt-get install -y jq
-
-      - name: Fetch latest upstream tag
+      - name: Fetch latest upstream tag and sha256
         id: get_tag
         shell: bash
         run: |
+          set -euo pipefail
+
           echo "Checking ${REPO_OWNER}/${REPO_NAME}"
 
           TAG=$(curl -s \
@@ -40,10 +39,21 @@ jobs:
 
           VERSION=${TAG#v}
 
+          ARCHIVE_URL="https://github.com/${REPO_OWNER}/${REPO_NAME}/archive/refs/tags/${VERSION}.tar.gz"
+
           echo "Latest tag: $TAG"
           echo "Resolved version: $VERSION"
+          echo "Archive: $ARCHIVE_URL"
+
+          echo "Downloading archive to compute sha256..."
+          curl -L "$ARCHIVE_URL" -o source.tar.gz
+
+          SHA256=$(sha256sum source.tar.gz | awk '{print $1}')
+
+          echo "Computed sha256: $SHA256"
 
           echo "pkg_version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "pkg_sha256=$SHA256" >> "$GITHUB_OUTPUT"
 
   ############################################
   # Build for each platform
@@ -71,6 +81,7 @@ jobs:
 
     env:
       PKG_VERSION: ${{ needs.resolve-version.outputs.pkg_version }}
+      PKG_SHA256: ${{ needs.resolve-version.outputs.pkg_sha256 }}
 
     steps:
       - uses: actions/checkout@v4

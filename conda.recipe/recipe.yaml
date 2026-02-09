@@ -10,7 +10,7 @@ package:
 source:
   url: https://github.com/${{ repo_owner }}/${{ repo_name }}/archive/refs/tags/${{ pkg_version }}.tar.gz
   target_directory: source
-  # sha256: ${{ env.get("PKG_SHA256", default="") }}
+  sha256: ${{ env.get("PKG_SHA256", default="") }}
 
 build:
   number: 0
