@@ -46,9 +46,7 @@ jobs:
           echo "Archive: $ARCHIVE_URL"
 
           echo "Downloading archive to compute sha256..."
-          curl -L "$ARCHIVE_URL" -o source.tar.gz
-
-          SHA256=$(sha256sum source.tar.gz | awk '{print $1}')
+          SHA256=$(curl -L https://github.com/OWNER/REPO/archive/refs/tags/v1.0.0.tar.gz | sha256sum)
 
           echo "Computed sha256: $SHA256"
 
