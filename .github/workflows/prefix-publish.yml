@@ -93,10 +93,10 @@ jobs:
       - name: Build conda package
         uses: prefix-dev/rattler-build-action@v0.2.34
         env:
-          REPO_OWNER: ${{ env.get("REPO_OWNER") }}
-          REPO_NAME: ${{ env.get("REPO_NAME") }}
-          PKG_VERSION: ${{ env.get("PKG_VERSION") }}
-          PKG_SHA256: ${{ env.get("PKG_SHA256") }}
+          REPO_OWNER: ${{ env.REPO_OWNER }}
+          REPO_NAME: ${{ env.REPO_NAME }}
+          PKG_VERSION: ${{ env.PKG_VERSION }}
+          PKG_SHA256: ${{ env.PKG_SHA256 }}
         with:
           artifact-name: ${{ env.REPO_NAME }}-${{ matrix.platform.target }}
           build-args: >
