@@ -83,6 +83,7 @@ jobs:
       PKG_VERSION: ${{ needs.resolve-version.outputs.pkg_version }}
       PKG_SHA256: ${{ needs.resolve-version.outputs.pkg_sha256 }}
 
+
     steps:
       - uses: actions/checkout@v4
 
@@ -91,6 +92,11 @@ jobs:
 
       - name: Build conda package
         uses: prefix-dev/rattler-build-action@v0.2.34
+        env:
+          REPO_OWNER: ${{ env.REPO_OWNER }}
+          REPO_NAME: ${{ env.REPO_NAME }}
+          PKG_VERSION: ${{ env.PKG_VERSION }}
+          PKG_SHA256: ${{ env.PKG_SHA256 }}
         with:
           artifact-name: ${{ env.REPO_NAME }}-${{ matrix.platform.target }}
           build-args: --target-platform ${{ matrix.platform.target }}
