@@ -18,6 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       pkg_version: ${{ steps.get_tag.outputs.pkg_version }}
+      pkg_sha256: ${{ steps.get_tag.outputs.pkg_sha256 }}
 
     steps:
       - name: Fetch latest upstream tag and sha256
