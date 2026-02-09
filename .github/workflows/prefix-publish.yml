@@ -14,46 +14,54 @@ jobs:
   ############################################
   # Resolve latest upstream version ONCE
   ############################################
-  - name: Fetch latest upstream tag, compute version and sha256
-    id: get_tag
-    shell: bash
-    run: |
-      set -euo pipefail
+  resolve-version:
+    runs-on: ubuntu-latest
+    outputs:
+      pkg_version: ${{ steps.get_tag.outputs.pkg_version }}
+      pkg_sha256: ${{ steps.get_tag.outputs.pkg_sha256 }}
+      
 
-      echo "Checking ${REPO_OWNER}/${REPO_NAME}"
+    steps:
+      - name: Fetch latest upstream tag, compute version and sha256
+        id: get_tag
+        shell: bash
+        run: |
+          set -euo pipefail
 
-      TAG=$(curl -s \
-        "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/tags" \
-        | jq -r '.[0].name')
+          echo "Checking ${REPO_OWNER}/${REPO_NAME}"
 
-      if [ "$TAG" = "null" ] || [ -z "$TAG" ]; then
-        echo "No tags found"
-        exit 1
-      fi
+          TAG=$(curl -s \
+            "https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/tags" \
+            | jq -r '.[0].name')
 
-      BASE_VERSION=${TAG#v}
+          if [ "$TAG" = "null" ] || [ -z "$TAG" ]; then
+            echo "No tags found"
+            exit 1
+          fi
 
-      # THIS REPO COMMIT
-      SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-7)
+          BASE_VERSION=${TAG#v}
 
-      VERSION="${BASE_VERSION}+git.${SHORT_SHA}"
+          # THIS REPO COMMIT
+          SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-7)
 
-      ARCHIVE_URL="https://github.com/${REPO_OWNER}/${REPO_NAME}/archive/refs/tags/${BASE_VERSION}.tar.gz"
+          VERSION="${BASE_VERSION}+git.${SHORT_SHA}"
 
-      echo "Latest upstream tag: $TAG"
-      echo "Packaging commit: $GITHUB_SHA"
-      echo "Resolved version: $VERSION"
-      echo "Archive: $ARCHIVE_URL"
+          ARCHIVE_URL="https://github.com/${REPO_OWNER}/${REPO_NAME}/archive/refs/tags/${BASE_VERSION}.tar.gz"
 
-      echo "Downloading archive to compute sha256..."
-      curl -L "$ARCHIVE_URL" -o source.tar.gz
+          echo "Latest upstream tag: $TAG"
+          echo "Packaging commit: $GITHUB_SHA"
+          echo "Resolved version: $VERSION"
+          echo "Archive: $ARCHIVE_URL"
 
-      SHA256=$(sha256sum source.tar.gz | awk '{print $1}')
+          echo "Downloading archive to compute sha256..."
+          curl -L "$ARCHIVE_URL" -o source.tar.gz
 
-      echo "Computed sha256: $SHA256"
+          SHA256=$(sha256sum source.tar.gz | awk '{print $1}')
 
-      echo "pkg_version=$VERSION" >> "$GITHUB_OUTPUT"
-      echo "pkg_sha256=$SHA256" >> "$GITHUB_OUTPUT"
+          echo "Computed sha256: $SHA256"
+
+          echo "pkg_version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "pkg_sha256=$SHA256" >> "$GITHUB_OUTPUT"
           
 
   ############################################
